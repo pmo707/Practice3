@@ -1,48 +1,50 @@
 package ua.nure.pihnastyi.practice3;
 
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Part5 {
 
+    public static final int DECIMAL=10;
 
     public static String decimal2Roman(int x) {
+        StringBuilder sb = new StringBuilder();
 
-        StringBuilder tmp = new StringBuilder();
+
         while (x > 0) {
-            int base = 0;
-            if ((x >= 1) && (x <= 9))
-                base = 1;
-            else if ((x >= 10) && (x <= 99))
-                base = 10;
-            else if ((x >= 100) && (x <= 999))
-                base = 100;
-            else if ((x >= 1000) && (x <= 3999))
-                base = 1000;
-            else if (x >= 4000) {
-                return "error";
+            int value = 1;
+
+            int countPow = 0;
+            for (int n = x; n != 0; n /= DECIMAL) {
+                ++countPow;
             }
-            if (x >= 9 * base) {
-                tmp.append(number2String(base)).append(number2String(base * 10));
-                x = x - 9 * base;
-            } else if (x >= 5 * base) {
-                tmp.append(number2String(5 * base));
-                x = x - 5 * base;
-            } else if (x >= 4 * base) {
-                tmp.append(number2String(base)).append(number2String(base * 5));
-                x = x - 4 * base;
+
+            for (int i = 1; i < countPow; i++) {
+                value = value * DECIMAL;
             }
-            while (x >= base) {
-                tmp.append(number2String(base));
-                x = x - base;
+            if (x >= 9 * value) {
+                sb.append(number2String(value)).append(number2String(value * 10));
+                x = x - 9 * value;
+            } else if (x >= 5 * value) {
+                sb.append(number2String(5 * value));
+                x = x - 5 * value;
+            } else if (x >= 4 * value) {
+                sb.append(number2String(value)).append(number2String(value * 5));
+                x = x - 4 * value;
+            }
+            while (x >= value) {
+                sb.append(number2String(value));
+                x = x - value;
             }
         }
 
-        return tmp.toString();
+
+        return sb.toString();
     }
 
 
-    public static void roman2Decimal(String s) {
+    public static int roman2Decimal(String s) {
         int result = 0;
         Pattern pattern = Pattern.compile("[IVXLC]");
         Matcher m = pattern.matcher(s);
@@ -70,7 +72,7 @@ public class Part5 {
         if (!m.find()) {
             result = result + b;
         }
-        System.out.println(result);
+        return result;
     }
 
     public static String number2String(int x) {
@@ -118,6 +120,12 @@ public class Part5 {
     }
 
     public static void main(String[] strings) {
-    roman2Decimal("XIV");
+        for (int i = 1; i <= 100; i++) {
+            String numberRoman = decimal2Roman(i);
+            System.out.print(i + " ===> ");
+            System.out.print(numberRoman + " ===> ");
+            System.out.println(roman2Decimal(numberRoman));
+
+        }
     }
 }
