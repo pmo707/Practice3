@@ -6,54 +6,56 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Part2 {
-    public static final String REGEX = "[A-Za-zA-Яа-яЁёІіЇї]+";
-    public static final int LAST_TWO_ELM = 2;
+    private static final String REGEX = "[A-Za-zA-Яа-яЁёІіЇї]+";
+    private static final int LAST_TWO_ELEMENTS = 2;
 
     public static void main(String[] args) {
         String input = Util.readFile("part2.txt");
         System.out.println(Part2.convert(input));
     }
 
-    public static String convert(String input) {
-        List<String> minSizeWord = new ArrayList<>();
-        List<String> maxSizeWord = new ArrayList<>();
+    private static String convertListToString(List<String> list, String listTitle) {
         StringBuilder sb = new StringBuilder();
-        String result;
+        sb.append(listTitle);
+        for (String s : list) {
+            sb.append(s).append(", ");
+        }
+        sb.delete(sb.length() - LAST_TWO_ELEMENTS, sb.length());
+        sb.append(System.lineSeparator());
+
+        return sb.toString();
+    }
+
+    public static String convert(String input) {
+        List<String> minSizeWords = new ArrayList<>();
+        List<String> maxSizeWords = new ArrayList<>();
+
         Pattern pattern = Pattern.compile(REGEX);
         Matcher m = pattern.matcher(input);
         if (m.find()) {
-            maxSizeWord.add(m.group());
-            minSizeWord.add(m.group());
+            maxSizeWords.add(m.group());
+            minSizeWords.add(m.group());
         }
         while (m.find()) {
-            if (m.group().length() > maxSizeWord.get(0).length()) {
-                maxSizeWord.clear();
-                maxSizeWord.add(m.group());
+            String matchedWord = m.group();
+            int maxWordLength = maxSizeWords.get(0).length();
+            int minWordLength = minSizeWords.get(0).length();
+
+            if (matchedWord.length() > maxWordLength) {
+                maxSizeWords.clear();
+                maxSizeWords.add(matchedWord);
+            } else if (matchedWord.length() == maxWordLength && !maxSizeWords.contains(matchedWord)) {
+                maxSizeWords.add(matchedWord);
             }
-            if (m.group().length() == maxSizeWord.get(0).length() && !maxSizeWord.contains(m.group())) {
-                maxSizeWord.add(m.group());
-            }
-            if (m.group().length() < minSizeWord.get(0).length()) {
-                minSizeWord.clear();
-                minSizeWord.add(m.group());
-            }
-            if (m.group().length() == minSizeWord.get(0).length() && !minSizeWord.contains(m.group())) {
-                minSizeWord.add(m.group());
+            if (matchedWord.length() < minWordLength) {
+                minSizeWords.clear();
+                minSizeWords.add(matchedWord);
+            } else if (matchedWord.length() == minWordLength && !minSizeWords.contains(matchedWord)) {
+                minSizeWords.add(matchedWord);
             }
         }
-        sb.append("Min: ");
-        for (String s : minSizeWord) {
-            sb.append(s).append(", ");
-        }
-        sb.delete(sb.length() - LAST_TWO_ELM, sb.length());
-        sb.append(System.lineSeparator());
-        sb.append("Max: ");
-        for (String s : maxSizeWord) {
-            sb.append(s).append(", ");
-        }
-        sb.delete(sb.length() - LAST_TWO_ELM, sb.length());
-        sb.append(System.lineSeparator());
-        result = sb.toString();
-        return result;
+
+        return convertListToString(minSizeWords, "Min: ")
+                + convertListToString(maxSizeWords, "Max: ");
     }
 }

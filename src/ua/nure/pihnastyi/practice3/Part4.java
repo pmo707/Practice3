@@ -6,6 +6,8 @@ import java.util.Locale;
 
 
 public class Part4 {
+    private static final int LAST_TWO_ELEMENTS = 2;
+    private static final int MAX_DIGIT = 9;
 
     public static String hash(String input, String hashType) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance(hashType);
@@ -15,28 +17,27 @@ public class Part4 {
 
 
         for (byte hashes : hash) {
-
-            if (hashes >= 0&&hashes<10) {
-
+            if (hashes >= 0 && hashes <= MAX_DIGIT) {
                 sb.append("0").append(Integer.toHexString(hashes).toUpperCase(Locale.ENGLISH));
             }
-            if (hashes >= 10) {
+            if (hashes > MAX_DIGIT) {
 
                 sb.append(Integer.toHexString(hashes).toUpperCase(Locale.ENGLISH));
             }
             if (hashes < 0) {
                 sb.append(Integer.toHexString(hashes)
-                        .substring(Integer.toHexString(hashes).length() - 2).toUpperCase(Locale.ENGLISH));
+                        .substring(Integer.toHexString(hashes).length() - LAST_TWO_ELEMENTS)
+                        .toUpperCase(Locale.ENGLISH));
             }
-
-
         }
 
         return sb.toString();
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println(hash("asd", "SHA-256"));
-        System.out.println(hash("asdf", "SHA-256"));
+
+            System.out.println(hash("asd", "SHA-256"));
+            System.out.println(hash("asdf", "SHA-256"));
+
     }
 }
